@@ -1,5 +1,7 @@
 name: Lint with Reviewdog
 on: [pull_request]
+permissions:
+  pull-requests: write
 jobs:
   checkstyle:
     name: runner / checkstyle
