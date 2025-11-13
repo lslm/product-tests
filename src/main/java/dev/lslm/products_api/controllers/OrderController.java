@@ -29,7 +29,7 @@ public class OrderController {
             response.setDiscount(order.getDiscount());
             response.setUnitPrice(order.getProduct().getPrice());
             response.setTotalPrice(order.getProduct().getPrice() * order.getQuantity());
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (IllegalStateException e) {
