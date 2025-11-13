@@ -1,43 +1,52 @@
 package dev.lslm.products_api.models;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OrderTests {
-
     @Test
-    void shouldCalculateOrderPriceWithDiscountWithinLimit() {
+    public void shouldReturnTotalPrice() {
         Product product = new Product();
-        product.setDescription("Mouse");
-        product.setSupplier("LogiTech");
-        product.setPrice(100.0);
-        product.setMaxDiscount(0.20); // 20%
+        product.setPrice(100);
+        product.setMaxDiscount(0.1);
 
         Order order = new Order();
         order.setProduct(product);
         order.setQuantity(2);
-        order.setDiscount(0.10); // 10% discount
+        order.setDiscount(0.1);
 
-        double expectedUnitPrice = product.getPriceWithDiscount(0.10); // 90.0
-        assertEquals(90.0, expectedUnitPrice, 0.0001);
-        assertEquals(180.0, order.getOrderPrice(), 0.0001);
+        double expectedOrderPrice = order.getOrderPrice();
+        assertEquals(180.0, expectedOrderPrice);
     }
 
     @Test
-    void shouldCapDiscountAboveMaxDiscount() {
+    public void shouldReturnTotalPriceWithDiscount() {
         Product product = new Product();
-        product.setDescription("Keyboard");
-        product.setSupplier("LogiTech");
-        product.setPrice(100.0);
-        product.setMaxDiscount(0.15); // 15%
+        product.setPrice(100);
+        product.setMaxDiscount(0.20);
 
         Order order = new Order();
         order.setProduct(product);
         order.setQuantity(2);
-        order.setDiscount(0.50); // 50% requested, should cap to 15%
+        order.setDiscount(0.1);
 
-        double expectedUnitPrice = product.getPriceWithDiscount(0.50); // capped to 15% -> 85.0
-        assertEquals(85.0, expectedUnitPrice, 0.0001);
-        assertEquals(170.0, order.getOrderPrice(), 0.0001);
+        double expectedOrderPrice = order.getOrderPrice();
+        assertEquals(180.0, expectedOrderPrice);
+    }
+
+    @Test
+    public void shouldReturnTotalPriceWithMaxDiscountAllowed() {
+        Product product = new Product();
+        product.setPrice(100);
+        product.setMaxDiscount(0.15);
+
+        Order order = new Order();
+        order.setProduct(product);
+        order.setQuantity(2);
+        order.setDiscount(0.5);
+
+        double expectedOrderPrice = order.getOrderPrice();
+        assertEquals(170.0, expectedOrderPrice);
     }
 }

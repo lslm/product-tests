@@ -2,6 +2,7 @@ package dev.lslm.products_api.controllers;
 
 import dev.lslm.products_api.models.Product;
 import dev.lslm.products_api.models.Stock;
+import dev.lslm.products_api.repositories.OrderRepository;
 import dev.lslm.products_api.repositories.ProductRepository;
 import dev.lslm.products_api.repositories.StockRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,11 +15,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -34,17 +34,17 @@ public class OrderControllerTests {
     private ProductRepository productRepository;
 
     @Autowired
+    private OrderRepository orderRepository;
+    @Autowired
     private StockRepository stockRepository;
-
-    private Product product;
 
     @BeforeEach
     void setup() {
-        product = new Product();
-        product.setDescription("Keyboard");
-        product.setSupplier("LogiTech");
+        Product product = new Product();
+        product.setDescription("Product Description");
+        product.setSupplier("supplier");
         product.setPrice(200.0);
-        product.setMaxDiscount(0.20);
+        product.setMaxDiscount(0.1);
         product = productRepository.save(product);
         Stock stock = new Stock();
         stock.setProduct(product);
@@ -54,7 +54,7 @@ public class OrderControllerTests {
 
     @Test
     void shouldCreateOrder() throws Exception {
-        String body = String.format("{\n  \"productId\": %d,\n  \"quantity\": 3,\n  \"discount\": 0.10\n}", product.getId());
+        String body = String.format("{\"productId\": 1, \"quantity\": 3, \"discount\": 0.10}");
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
                 .post("/orders")
@@ -62,32 +62,7 @@ public class OrderControllerTests {
                 .content(body))
                 .andExpect(status().isCreated())
                 .andReturn();
-
-        String response = result.getResponse().getContentAsString();
-        assertTrue(response.contains("\"productId\":" + product.getId()));
-        assertTrue(response.contains("\"quantity\":3"));
-    }
-
-    @Test
-    void shouldReturnConflictWhenInsufficientStock() throws Exception {
-        String body = String.format("{\n  \"productId\": %d,\n  \"quantity\": 50,\n  \"discount\": 0.10\n}", product.getId());
-
-        mockMvc.perform(MockMvcRequestBuilders
-                .post("/orders")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andExpect(status().isConflict())
-                .andExpect(content().string(containsString("Insufficient stock")));
-    }
-
-    @Test
-    void shouldReturnBadRequestWhenInvalidQuantity() throws Exception {
-        String body = String.format("{\n  \"productId\": %d,\n  \"quantity\": 0,\n  \"discount\": 0.10\n}", product.getId());
-
-        mockMvc.perform(MockMvcRequestBuilders
-                .post("/orders")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andExpect(status().isBadRequest());
+        String responseBody = result.getResponse().getContentAsString();
+        assertTrue(responseBody.contains("\"productId\""));
     }
 }

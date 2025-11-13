@@ -24,23 +24,6 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
-    /**
-     * Create a new Order for a given product if stock quantity is sufficient.
-     * Rules:
-     *  - quantity must be > 0
-     *  - product must exist
-     *  - stock record must exist and have at least the requested quantity
-     *  - discount negative values are treated as 0
-     *  - discount values above product maxDiscount are capped to maxDiscount
-     * On success, stock is decreased and the Order persisted.
-     *
-     * @param productId ID of the product to order
-     * @param quantity  number of units requested
-     * @param discount  discount fraction (0.0 - 1.0)
-     * @return persisted Order
-     * @throws IllegalArgumentException if validation fails
-     * @throws IllegalStateException if insufficient stock
-     */
     @Transactional
     public Order createOrder(int productId, int quantity, double discount) {
         if (quantity <= 0) {

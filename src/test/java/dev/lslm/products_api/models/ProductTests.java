@@ -2,24 +2,24 @@ package dev.lslm.products_api.models;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProductTests {
     @Test
-    public void shouldCalculateTotalPriceWithDiscount() {
-        Product product = new Product();
-        product.setPrice(100.00);
-        product.setMaxDiscount(0.2);
-        double priceWithDiscount = product.getPriceWithDiscount(0.1);
-        assertEquals(90, priceWithDiscount);
-    }
-
-    @Test
-    public void shouldCalculatePriceWithMaxDiscount() {
+    public void shouldCalculatePriceWithDiscount() {
         Product product = new Product();
         product.setPrice(100.0);
         product.setMaxDiscount(0.2);
-        double priceWithDiscount = product.getPriceWithDiscount(0.3);
-        assertEquals(80, priceWithDiscount);
+        double totalPrice = product.getPriceWithDiscount(0.2);
+        assertEquals(80, totalPrice);
+    }
+
+    @Test
+    public void shouldCalculatePriceWithMaxDiscountAllowed() {
+        Product product = new Product();
+        product.setPrice(100.0);
+        product.setMaxDiscount(0.2);
+        double totalPrice = product.getPriceWithDiscount(0.5);
+        assertEquals(80, totalPrice);
     }
 }
