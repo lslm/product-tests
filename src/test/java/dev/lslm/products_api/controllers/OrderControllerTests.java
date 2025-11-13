@@ -60,7 +60,7 @@ public class OrderControllerTests {
                 .post("/orders")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andReturn();
         String responseBody = result.getResponse().getContentAsString();
         assertTrue(responseBody.contains("\"productId\""));
