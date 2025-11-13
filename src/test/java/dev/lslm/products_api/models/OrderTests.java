@@ -17,7 +17,7 @@ public class OrderTests {
         order.setDiscount(0.1);
 
         double expectedOrderPrice = order.getOrderPrice();
-        assertEquals(180.0, expectedOrderPrice);
+        assertEquals(181.0, expectedOrderPrice);
     }
 
     @Test
